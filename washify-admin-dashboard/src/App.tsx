@@ -7,81 +7,13 @@ import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Orders from './components/Orders';
 import Users from './components/Users';
+import Services from './components/Services';
+import Branches from './components/Branches';
+import Shippers from './components/Shippers';
+import Promotions from './components/Promotions';
 import Analytics from './components/Analytics';
 import Login from './components/Login';
 import './index.css';
-
-const Services: React.FC = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Quản lý dịch vụ</h1>
-      <p className="page-subtitle">Danh sách dịch vụ giặt là</p>
-    </div>
-    <div className="table-container">
-      <div className="table-header">
-        <h2 className="table-title">Danh sách dịch vụ</h2>
-        <p className="table-subtitle">Tính năng đang được phát triển</p>
-      </div>
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-        Tính năng quản lý dịch vụ sẽ sớm được cập nhật
-      </div>
-    </div>
-  </div>
-);
-
-const Branches: React.FC = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Quản lý chi nhánh</h1>
-      <p className="page-subtitle">Danh sách chi nhánh Washify</p>
-    </div>
-    <div className="table-container">
-      <div className="table-header">
-        <h2 className="table-title">Danh sách chi nhánh</h2>
-        <p className="table-subtitle">Tính năng đang được phát triển</p>
-      </div>
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-        Tính năng quản lý chi nhánh sẽ sớm được cập nhật
-      </div>
-    </div>
-  </div>
-);
-
-const Shippers: React.FC = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Quản lý shipper</h1>
-      <p className="page-subtitle">Danh sách nhân viên giao hàng</p>
-    </div>
-    <div className="table-container">
-      <div className="table-header">
-        <h2 className="table-title">Danh sách shipper</h2>
-        <p className="table-subtitle">Tính năng đang được phát triển</p>
-      </div>
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-        Tính năng quản lý shipper sẽ sớm được cập nhật
-      </div>
-    </div>
-  </div>
-);
-
-const Promotions: React.FC = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Quản lý khuyến mãi</h1>
-      <p className="page-subtitle">Chương trình và mã giảm giá</p>
-    </div>
-    <div className="table-container">
-      <div className="table-header">
-        <h2 className="table-title">Danh sách khuyến mãi</h2>
-        <p className="table-subtitle">Tính năng đang được phát triển</p>
-      </div>
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-        Tính năng quản lý khuyến mãi sẽ sớm được cập nhật
-      </div>
-    </div>
-  </div>
-);
 
 const Notifications: React.FC = () => (
   <div>

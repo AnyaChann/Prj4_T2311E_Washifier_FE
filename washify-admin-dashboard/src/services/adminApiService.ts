@@ -119,4 +119,17 @@ export class AdminApiService {
       throw error;
     }
   }
+
+  // Try to fetch promotions (may not exist but let's test)
+  static async getPromotions() {
+    try {
+      console.log('Fetching promotions...');
+      const response = await apiClient.get('/api/promotions');
+      console.log('Promotions response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching promotions:', error);
+      throw error;
+    }
+  }
 }
