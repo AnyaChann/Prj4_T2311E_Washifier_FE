@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Orders from './components/Orders';
+import Analytics from './components/Analytics';
 import Login from './components/Login';
 import './index.css';
 
@@ -154,6 +155,7 @@ const DashboardLayout: React.FC = () => {
         <div className="content-wrapper">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/users" element={<Users />} />
             <Route path="/services" element={<Services />} />

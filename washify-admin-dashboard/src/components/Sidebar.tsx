@@ -9,7 +9,8 @@ import {
   Settings,
   Bell,
   Package,
-  Gift
+  Gift,
+  BarChart3
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -25,6 +26,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Tổng quan', icon: <LayoutDashboard className="nav-icon" /> },
+  { id: 'analytics', label: 'Phân tích', icon: <BarChart3 className="nav-icon" /> },
   { id: 'orders', label: 'Đơn hàng', icon: <ShoppingBag className="nav-icon" /> },
   { id: 'users', label: 'Khách hàng', icon: <Users className="nav-icon" /> },
   { id: 'services', label: 'Dịch vụ', icon: <Package className="nav-icon" /> },

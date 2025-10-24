@@ -570,3 +570,59 @@ code {
 .content-wrapper {
   padding: 20px;
 }
+
+/* ==================== CHARTS ==================== */
+.chart-container {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.chart-container.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 3rem;
+  color: #64748b;
+  gap: 1rem;
+}
+
+.chart-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.chart-subtitle {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.chart-body {
+  padding: 1.5rem;
+}
+
+/* Responsive charts */
+@media (max-width: 1024px) {
+  .chart-container {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .chart-body {
+    padding: 1rem;
+  }
+}

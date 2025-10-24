@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, Edit, Filter } from 'lucide-react';
+import { Eye, Edit } from 'lucide-react';
 import { OrderService } from '../services/apiService';
 import { OrderResponse } from '../types/api';
+import AdvancedFilter from './filters/AdvancedFilter';
+import ExportButton from './ExportButton';
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>('all');
+  const [filters, setFilters] = useState<any>({
+    searchTerm: '',
+    dateFrom: '',
+    dateTo: '',
+    status: ''
+  });
 
   useEffect(() => {
     fetchOrders();
@@ -73,20 +80,37 @@ const Orders: React.FC = () => {
   };
 
   const filteredOrders = orders.filter(order => {
-    if (filter === 'all') return true;
-    return order.status === filter;
-  });
+    // Filter by search term
+    if (filters.searchTerm) {
+      const searchLower = filters.searchTerm.toLowerCase();
+      const matchesSearch = 
+        order.orderCode?.toLowerCase().includes(searchLower) ||
+        order.userName?.toLowerCase().includes(searchLower) ||
+        order.branchName?.toLowerCase().includes(searchLower);
+      if (!matchesSearch) return false;
+    }
 
-  const statusOptions = [
-    { value: 'all', label: 'Tất cả' },
-    { value: 'PENDING', label: 'Chờ xử lý' },
-    { value: 'CONFIRMED', label: 'Đã xác nhận' },
-    { value: 'PROCESSING', label: 'Đang xử lý' },
-    { value: 'READY', label: 'Sẵn sàng' },
-    { value: 'DELIVERING', label: 'Đang giao' },
-    { value: 'COMPLETED', label: 'Hoàn thành' },
-    { value: 'CANCELLED', label: 'Đã hủy' }
-  ];
+    // Filter by status
+    if (filters.status && filters.status !== '') {
+      if (order.status !== filters.status) return false;
+    }
+
+    // Filter by date range
+    if (filters.dateFrom) {
+      const orderDate = new Date(order.orderDate || '');
+      const fromDate = new Date(filters.dateFrom);
+      if (orderDate < fromDate) return false;
+    }
+
+    if (filters.dateTo) {
+      const orderDate = new Date(order.orderDate || '');
+      const toDate = new Date(filters.dateTo);
+      toDate.setHours(23, 59, 59, 999);
+      if (orderDate > toDate) return false;
+    }
+
+    return true;
+  });
 
   if (loading) {
     return (
@@ -118,22 +142,30 @@ const Orders: React.FC = () => {
             <h2 className="table-title">Danh sách đơn hàng</h2>
             <p className="table-subtitle">Tổng cộng {filteredOrders.length} đơn hàng</p>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Filter style={{ width: '16px', height: '16px' }} />
-            <select 
-              value={filter} 
-              onChange={(e) => setFilter(e.target.value)}
-              className="form-select"
-              style={{ width: 'auto', minWidth: '150px' }}
-            >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <ExportButton
+            data={filteredOrders}
+            filename="orders"
+            title="Danh sách đơn hàng"
+            buttonText="📥 Xuất dữ liệu"
+          />
+        </div>
+
+        <div style={{ padding: '1.5rem' }}>
+          <AdvancedFilter
+            onFilterChange={setFilters}
+            statusOptions={[
+              { value: 'PENDING', label: 'Chờ xử lý' },
+              { value: 'CONFIRMED', label: 'Đã xác nhận' },
+              { value: 'PROCESSING', label: 'Đang xử lý' },
+              { value: 'READY', label: 'Sẵn sàng' },
+              { value: 'DELIVERING', label: 'Đang giao' },
+              { value: 'COMPLETED', label: 'Hoàn thành' },
+              { value: 'CANCELLED', label: 'Đã hủy' }
+            ]}
+            showDateRange={true}
+            showStatus={true}
+            placeholder="Tìm kiếm theo mã đơn, tên khách hàng hoặc chi nhánh..."
+          />
         </div>
         
         <div style={{ overflowX: 'auto' }}>
@@ -202,7 +234,7 @@ const Orders: React.FC = () => {
         
         {filteredOrders.length === 0 && (
           <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-            {filter === 'all' ? 'Chưa có đơn hàng nào' : `Không có đơn hàng với trạng thái "${getStatusText(filter)}"`}
+            Không có đơn hàng nào phù hợp với bộ lọc
           </div>
         )}
       </div>
