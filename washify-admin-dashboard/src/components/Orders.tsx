@@ -4,6 +4,7 @@ import { OrderService } from '../services/apiService';
 import { OrderResponse } from '../types/api';
 import AdvancedFilter from './filters/AdvancedFilter';
 import ExportButton from './ExportButton';
+import OrderDetailModal from './modals/OrderDetailModal';
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
@@ -15,6 +16,8 @@ const Orders: React.FC = () => {
     dateTo: '',
     status: ''
   });
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -77,6 +80,32 @@ const Orders: React.FC = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleViewOrder = (orderId?: number) => {
+    if (orderId) {
+      setSelectedOrderId(orderId);
+      setIsDetailModalOpen(true);
+    }
+  };
+
+  const handleEditOrder = (orderId?: number) => {
+    if (orderId) {
+      // TODO: Implement edit order functionality
+      console.log('Edit order:', orderId);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedOrderId(null);
+  };
+
+  const handleOrderUpdate = (updatedOrder: OrderResponse) => {
+    // Update the order in the list
+    setOrders(prev => prev.map(order => 
+      order.id === updatedOrder.id ? updatedOrder : order
+    ));
   };
 
   const filteredOrders = orders.filter(order => {
@@ -214,13 +243,15 @@ const Orders: React.FC = () => {
                     <div className="flex gap-2">
                       <button 
                         className="btn btn-sm btn-primary"
-                        onClick={() => console.log('View order:', order.id)}
+                        onClick={() => handleViewOrder(order.id)}
+                        title="Xem chi tiết"
                       >
                         <Eye style={{ width: '14px', height: '14px' }} />
                       </button>
                       <button 
                         className="btn btn-sm btn-secondary"
-                        onClick={() => console.log('Edit order:', order.id)}
+                        onClick={() => handleEditOrder(order.id)}
+                        title="Chỉnh sửa"
                       >
                         <Edit style={{ width: '14px', height: '14px' }} />
                       </button>
@@ -238,6 +269,14 @@ const Orders: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Order Detail Modal */}
+      <OrderDetailModal
+        orderId={selectedOrderId}
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseModal}
+        onOrderUpdate={handleOrderUpdate}
+      />
     </div>
   );
 };

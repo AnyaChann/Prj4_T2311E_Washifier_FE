@@ -6,28 +6,10 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Orders from './components/Orders';
+import Users from './components/Users';
 import Analytics from './components/Analytics';
 import Login from './components/Login';
 import './index.css';
-
-// Placeholder components cho các tab khác
-const Users: React.FC = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Quản lý khách hàng</h1>
-      <p className="page-subtitle">Danh sách và thông tin khách hàng</p>
-    </div>
-    <div className="table-container">
-      <div className="table-header">
-        <h2 className="table-title">Danh sách khách hàng</h2>
-        <p className="table-subtitle">Tính năng đang được phát triển</p>
-      </div>
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-        Tính năng quản lý khách hàng sẽ sớm được cập nhật
-      </div>
-    </div>
-  </div>
-);
 
 const Services: React.FC = () => (
   <div>
