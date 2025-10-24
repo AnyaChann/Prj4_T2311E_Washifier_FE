@@ -28,8 +28,8 @@ const Header: React.FC = () => {
 
   return (
     <header style={{
-    //   background: 'white',
-    //   borderBottom: '1px solid #e2e8f0',
+      background: 'white',
+      borderBottom: '1px solid #e2e8f0',
       padding: '0 2rem',
       height: '64px',
       display: 'flex',
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
       position: 'sticky',
       top: 0,
       zIndex: 10,
-    //   boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
     }}>
       {/* Left side - Page title sẽ được cập nhật từ component con */}
       <div style={{

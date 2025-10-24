@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Truck, Phone, Car, Calendar, Activity, TrendingUp, Star, MapPin, Award } from 'lucide-react';
 import { ShipperResponse } from '../../types/api';
+import { AdminApiService } from '../../services/adminApiService';
 
 interface ShipperDetailModalProps {
   shipperId: number | null;
@@ -32,20 +33,18 @@ const ShipperDetailModal: React.FC<ShipperDetailModalProps> = ({
       
       console.log('🚚 ShipperDetail: Fetching shipper detail for ID:', shipperId);
       
-      // Mock shipper detail (replace with actual API call)
-      const mockShipper: ShipperResponse = {
-        id: shipperId,
-        name: ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Minh Cường', 'Phạm Thị Dung', 'Hoàng Văn Em'][shipperId % 5] || `Shipper ${shipperId}`,
-        phone: `09${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`,
-        vehicleNumber: `${Math.floor(Math.random() * 99) + 10}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 2) + 1}-${Math.floor(Math.random() * 90000) + 10000}`,
-        isActive: Math.random() > 0.2,
-        createdAt: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: Math.random() > 0.9 ? new Date().toISOString() : undefined
-      };
+      // Try to fetch real data from API
+      const response = await AdminApiService.getShipperById(shipperId);
+      console.log('🚚 ShipperDetail: API Response:', response);
       
-      setShipper(mockShipper);
-      console.log('✅ ShipperDetail: Got shipper data:', mockShipper);
+      if (response?.data) {
+        setShipper(response.data);
+        console.log('✅ ShipperDetail: Got real shipper data:', response.data);
+      } else if (response && !response.data) {
+        // Sometimes API returns shipper directly
+        setShipper(response);
+        console.log('✅ ShipperDetail: Got shipper data (direct):', response);
+      }
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải chi tiết shipper');

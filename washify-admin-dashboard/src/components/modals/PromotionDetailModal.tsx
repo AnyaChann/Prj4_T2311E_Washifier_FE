@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Tag, Gift, Percent, Calendar, Activity, TrendingUp, Clock, Users } from 'lucide-react';
 import { PromotionResponse } from '../../types/api';
+import { AdminApiService } from '../../services/adminApiService';
 
 interface PromotionDetailModalProps {
   promotionId: number | null;
@@ -32,27 +33,18 @@ const PromotionDetailModal: React.FC<PromotionDetailModalProps> = ({
       
       console.log('🎁 PromotionDetail: Fetching promotion detail for ID:', promotionId);
       
-      // Mock promotion detail (replace with actual API call)
-      const mockPromotion: PromotionResponse = {
-        id: promotionId,
-        code: promotionId === 1 ? 'WELCOME20' : 
-              promotionId === 2 ? 'SUMMER50K' :
-              promotionId === 3 ? 'STUDENT15' :
-              `PROMO${promotionId}`,
-        description: promotionId === 1 ? 'Giảm giá 20% cho khách hàng mới đăng ký sử dụng dịch vụ lần đầu' :
-                    promotionId === 2 ? 'Giảm 50,000đ cho đơn hàng từ 200,000đ trong mùa hè' :
-                    promotionId === 3 ? 'Ưu đãi đặc biệt 15% dành riêng cho sinh viên có thẻ học sinh' :
-                    `Mô tả chi tiết cho chương trình khuyến mãi ${promotionId}`,
-        discountType: Math.random() > 0.5 ? 'PERCENTAGE' : 'FIXED',
-        discountValue: Math.random() > 0.5 ? Math.floor(Math.random() * 50) + 10 : (Math.floor(Math.random() * 5) + 1) * 10000,
-        startDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-        endDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-        isActive: Math.random() > 0.3,
-        deletedAt: Math.random() > 0.9 ? new Date().toISOString() : undefined
-      };
+      // Try to fetch real data from API
+      const response = await AdminApiService.getPromotionById(promotionId);
+      console.log('🎁 PromotionDetail: API Response:', response);
       
-      setPromotion(mockPromotion);
-      console.log('✅ PromotionDetail: Got promotion data:', mockPromotion);
+      if (response?.data) {
+        setPromotion(response.data);
+        console.log('✅ PromotionDetail: Got real promotion data:', response.data);
+      } else if (response && !response.data) {
+        // Sometimes API returns promotion directly
+        setPromotion(response);
+        console.log('✅ PromotionDetail: Got promotion data (direct):', response);
+      }
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải chi tiết khuyến mãi');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Save, AlertTriangle, User, Phone, Car } from 'lucide-react';
 import { ShipperResponse } from '../../types/api';
+import { AdminApiService } from '../../services/adminApiService';
 
 interface ShipperFormModalProps {
   shipperId?: number | null;
@@ -64,23 +65,27 @@ const ShipperFormModal: React.FC<ShipperFormModalProps> = ({
       
       console.log('🚚 ShipperForm: Fetching shipper for edit, ID:', shipperId);
       
-      // Mock shipper data (replace with actual API call)
-      const mockShipper: ShipperResponse = {
-        id: shipperId,
-        name: ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Minh Cường'][shipperId % 3] || `Shipper ${shipperId}`,
-        phone: `09${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`,
-        vehicleNumber: `${Math.floor(Math.random() * 99) + 10}H1-${Math.floor(Math.random() * 90000) + 10000}`,
-        isActive: Math.random() > 0.3
-      };
+      // Try to fetch real data from API
+      const response = await AdminApiService.getShipperById(shipperId);
+      console.log('🚚 ShipperForm: API Response:', response);
       
-      setForm({
-        name: mockShipper.name || '',
-        phone: mockShipper.phone || '',
-        vehicleNumber: mockShipper.vehicleNumber || '',
-        isActive: mockShipper.isActive ?? true
-      });
-      
-      console.log('✅ ShipperForm: Loaded shipper data:', mockShipper);
+      let shipperData: ShipperResponse | null = null;
+      if (response?.data) {
+        shipperData = response.data;
+      } else if (response && !response.data) {
+        // Sometimes API returns shipper directly
+        shipperData = response;
+      }
+
+      if (shipperData) {
+        setForm({
+          name: shipperData.name || '',
+          phone: shipperData.phone || '',
+          vehicleNumber: shipperData.vehicleNumber || '',
+          isActive: shipperData.isActive ?? true
+        });
+        console.log('✅ ShipperForm: Loaded real shipper data:', shipperData);
+      }
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải dữ liệu shipper');
@@ -143,18 +148,22 @@ const ShipperFormModal: React.FC<ShipperFormModalProps> = ({
       
       // Clean and format data before submission
       const submitData = {
-        ...form,
-        phone: form.phone.replace(/\s/g, ''),
+        fullName: form.name.trim(),
+        phoneNumber: form.phone.replace(/\s/g, ''),
         vehicleNumber: form.vehicleNumber.replace(/\s/g, '').toUpperCase(),
-        name: form.name.trim()
+        isActive: form.isActive
       };
       
       console.log(`🚚 ShipperForm: ${isEdit ? 'Updating' : 'Creating'} shipper:`, submitData);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      let response;
+      if (isEdit && shipperId) {
+        response = await AdminApiService.updateShipper(shipperId, submitData);
+      } else {
+        response = await AdminApiService.createShipper(submitData);
+      }
       
-      console.log(`✅ ShipperForm: Successfully ${isEdit ? 'updated' : 'created'} shipper`);
+      console.log(`✅ ShipperForm: Successfully ${isEdit ? 'updated' : 'created'} shipper:`, response);
       
       onSuccess();
       onClose();

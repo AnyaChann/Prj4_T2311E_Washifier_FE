@@ -35,16 +35,26 @@ const Branches: React.FC = () => {
       
       console.log('🏢 Branches: Fetching branches data...');
       
-      // Try to fetch real data first, fallback to mock if fails
+      // Try to fetch real data from API
       try {
-        const realData = await AdminApiService.getBranches();
-        if (realData && Array.isArray(realData)) {
-          setBranches(realData);
-          console.log('✅ Branches: Successfully loaded real data:', realData);
+        const response = await AdminApiService.getBranches();
+        console.log('🔍 Branches: API Response:', response);
+        
+        // Check if response has data array
+        if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log('✅ Branches: Successfully loaded real data:', response.data.length, 'branches');
+          setBranches(response.data);
           return;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Sometimes API returns array directly
+          console.log('✅ Branches: Successfully loaded real data (direct array):', response.length, 'branches');
+          setBranches(response);
+          return;
+        } else {
+          console.log('⚠️ Branches: API returned empty or invalid data');
         }
       } catch (err) {
-        console.log('⚠️ Branches: Real API failed, using mock data. Error:', err);
+        console.log('⚠️ Branches: Real API failed. Error:', err);
       }
       
       // Fallback to mock data
@@ -106,8 +116,10 @@ const Branches: React.FC = () => {
         }
       ];
       
-      setBranches(mockBranches);
-      console.log('✅ Branches: Got mock branches data:', mockBranches.length, 'branches');
+      // Show empty state instead of mock data
+      console.log('📭 Branches: No data available from API, showing empty state');
+      setBranches([]);
+      setError('Không có dữ liệu chi nhánh hoặc API chưa sẵn sàng');
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải danh sách chi nhánh');

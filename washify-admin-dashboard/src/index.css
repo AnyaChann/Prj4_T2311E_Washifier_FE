@@ -93,23 +93,32 @@ code {
 .main-content {
   flex: 1;
   margin-left: 250px;
-  padding: 2rem;
+  /* padding: 2rem; */
 }
 
 .page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .page-title {
+  display: flex;
+  align-items: center;
   font-size: 2rem;
   font-weight: bold;
   color: #1e293b;
   margin-bottom: 0.5rem;
+  gap: 0.75rem;
 }
 
 .page-subtitle {
   color: #64748b;
   font-size: 1rem;
+  margin: 0;
 }
 
 /* Stats Cards */
@@ -168,6 +177,7 @@ code {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   overflow: hidden;
+  overflow-x: auto;
 }
 
 .table-header {
@@ -221,16 +231,19 @@ code {
 .status-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
 }
 
 .status-pending {
   background: #fef3c7;
   color: #92400e;
+  border-color: #fde68a;
 }
 
 .status-confirmed {
@@ -266,11 +279,13 @@ code {
 .status-active {
   background: #dcfce7;
   color: #166534;
+  border-color: #bbf7d0;
 }
 
 .status-inactive {
   background: #f3f4f6;
   color: #6b7280;
+  border-color: #d1d5db;
 }
 
 /* Buttons */
@@ -568,7 +583,7 @@ code {
 
 /* ==================== CONTENT WRAPPER ==================== */
 .content-wrapper {
-  /* padding: 20px; */
+  padding: 2rem;
 }
 
 /* ==================== CHARTS ==================== */
@@ -950,4 +965,291 @@ code {
   width: 24px;
   height: 24px;
   margin-right: 0.5rem;
+}
+
+/* ==================== PAGE LAYOUT ==================== */
+.page-container {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ==================== FILTERS SECTION ==================== */
+.filters-section {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* ==================== CONTENT SECTION ==================== */
+.content-section {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* ==================== DATA TABLE ==================== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.data-table th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 1rem 1.5rem;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.data-table tbody tr.deleted-row {
+  background: #fef2f2;
+  opacity: 0.7;
+}
+
+.data-table tbody tr.deleted-row:hover {
+  background: #fecaca;
+}
+
+/* ==================== ID BADGE ==================== */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.5rem;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #c7d2fe;
+}
+
+/* ==================== STATUS BADGES ENHANCEMENTS ==================== */
+.status-expired {
+  background: #fecaca;
+  color: #991b1b;
+  border-color: #f87171;
+}
+
+.status-deleted {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+/* ==================== ACTION BUTTONS ==================== */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.btn-action:hover {
+  background: #f1f5f9;
+  color: #374151;
+  border-color: #e2e8f0;
+}
+
+.btn-view {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #dbeafe;
+}
+
+.btn-view:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+.btn-edit {
+  background: #fefce8;
+  color: #ca8a04;
+  border-color: #fde047;
+}
+
+.btn-edit:hover {
+  background: #fde047;
+  color: #a16207;
+  border-color: #facc15;
+}
+
+.btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-delete:hover {
+  background: #fecaca;
+  color: #b91c1c;
+  border-color: #f87171;
+}
+
+/* ==================== UTILITY STYLES FOR ICONS ==================== */
+.icon-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ==================== PROMOTION SPECIFIC STYLES ==================== */
+.promotion-code {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #d1d5db;
+}
+
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.discount-percentage {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.discount-fixed {
+  background: #f0fdf4;
+  color: #059669;
+  border-color: #bbf7d0;
+}
+
+/* ==================== VEHICLE NUMBER ==================== */
+.vehicle-number {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+/* ==================== PHONE NUMBER ==================== */
+.phone-number {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1024px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .page-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .filters-section {
+    padding: 1rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .btn-action {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .data-table {
+    font-size: 0.875rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem;
+  }
 }

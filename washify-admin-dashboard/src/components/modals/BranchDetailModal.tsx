@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, MapPin, Building2, Phone, User, Calendar, Activity, TrendingUp } from 'lucide-react';
 import { BranchResponse } from '../../types/api';
+import { AdminApiService } from '../../services/adminApiService';
 
 interface BranchDetailModalProps {
   branchId: number | null;
@@ -32,22 +33,18 @@ const BranchDetailModal: React.FC<BranchDetailModalProps> = ({
       
       console.log('🏢 BranchDetail: Fetching branch detail for ID:', branchId);
       
-      // Mock branch detail (replace with actual API call)
-      const mockBranch: BranchResponse = {
-        id: branchId,
-        name: `Chi nhánh ${branchId === 1 ? 'Quận 1' : branchId === 2 ? 'Quận 7' : `Số ${branchId}`}`,
-        address: branchId === 1 ? '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM' :
-                 branchId === 2 ? '456 Huỳnh Tấn Phát, Phường Tân Thuận Đông, Quận 7, TP.HCM' :
-                 `Địa chỉ chi nhánh ${branchId}`,
-        phone: `028 ${Math.floor(Math.random() * 9000) + 1000} ${Math.floor(Math.random() * 9000) + 1000}`,
-        managerName: ['Nguyễn Văn Nam', 'Trần Thị Lan', 'Lê Minh Tuấn'][branchId % 3] || `Quản lý ${branchId}`,
-        isActive: Math.random() > 0.2,
-        createdAt: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-        deletedAt: Math.random() > 0.9 ? new Date().toISOString() : undefined
-      };
+      // Try to fetch real data from API
+      const response = await AdminApiService.getBranchById(branchId);
+      console.log('🏢 BranchDetail: API Response:', response);
       
-      setBranch(mockBranch);
-      console.log('✅ BranchDetail: Got branch data:', mockBranch);
+      if (response?.data) {
+        setBranch(response.data);
+        console.log('✅ BranchDetail: Got real branch data:', response.data);
+      } else if (response && !response.data) {
+        // Sometimes API returns branch directly
+        setBranch(response);
+        console.log('✅ BranchDetail: Got branch data (direct):', response);
+      }
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải chi tiết chi nhánh');

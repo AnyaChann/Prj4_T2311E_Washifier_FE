@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Settings, Plus, Eye, Edit, Trash2, Clock, DollarSign } from 'lucide-react';
+import { Settings, Plus, Eye, Edit, Trash2, Clock, DollarSign, Currency } from 'lucide-react';
 import { ServiceResponse } from '../types/api';
 import { AdminApiService } from '../services/adminApiService';
 import AdvancedFilter from './filters/AdvancedFilter';
@@ -35,77 +35,32 @@ const Services: React.FC = () => {
       
       console.log('🛍️ Services: Fetching services data...');
       
-      // Try to fetch real data first, fallback to mock if fails
+      // Try to fetch real data from API
       try {
-        const realData = await AdminApiService.getServices();
-        if (realData && Array.isArray(realData)) {
-          setServices(realData);
-          console.log('✅ Services: Successfully loaded real data:', realData);
+        const response = await AdminApiService.getServices();
+        console.log('🔍 Services: API Response:', response);
+        
+        // Check if response has data array
+        if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log('✅ Services: Successfully loaded real data:', response.data.length, 'services');
+          setServices(response.data);
           return;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Sometimes API returns array directly
+          console.log('✅ Services: Successfully loaded real data (direct array):', response.length, 'services');
+          setServices(response);
+          return;
+        } else {
+          console.log('⚠️ Services: API returned empty or invalid data, using fallback');
         }
       } catch (err) {
-        console.log('⚠️ Services: Real API failed, using mock data. Error:', err);
+        console.log('⚠️ Services: Real API failed, using fallback. Error:', err);
       }
       
-      // Fallback to mock data
-      const mockServices: ServiceResponse[] = [
-        {
-          id: 1,
-          name: 'Giặt khô quần áo',
-          description: 'Dịch vụ giặt khô chuyên nghiệp cho quần áo dễ bị hỏng',
-          price: 50000,
-          estimatedTime: 120,
-          isActive: true
-        },
-        {
-          id: 2,
-          name: 'Giặt ướt thường',
-          description: 'Giặt ướt cơ bản cho quần áo hàng ngày',
-          price: 25000,
-          estimatedTime: 60,
-          isActive: true
-        },
-        {
-          id: 3,
-          name: 'Ủi đồ',
-          description: 'Dịch vụ ủi đồ chuyên nghiệp, làm phẳng nếp nhăn',
-          price: 15000,
-          estimatedTime: 30,
-          isActive: true
-        },
-        {
-          id: 4,
-          name: 'Giặt chăn màn',
-          description: 'Giặt chăn ga gối đệm, màn cửa',
-          price: 80000,
-          estimatedTime: 180,
-          isActive: true
-        },
-        {
-          id: 5,
-          name: 'Giặt vest, áo khoác',
-          description: 'Chuyên giặt vest, áo khoác cao cấp',
-          price: 120000,
-          estimatedTime: 240,
-          isActive: false
-        }
-      ];
-      
-      // Try to fetch from API, fallback to mock data
-      try {
-        // TODO: Implement API call when available
-        // const response = await AdminApiService.getServices();
-        // if (response?.data) {
-        //   setServices(response.data);
-        // } else {
-        //   setServices(mockServices);
-        // }
-        setServices(mockServices);
-        console.log('✅ Services: Using mock data:', mockServices.length, 'services');
-      } catch (apiError) {
-        console.log('⚠️ Services: API not available, using mock data');
-        setServices(mockServices);
-      }
+      // Fallback: Show empty state message
+      console.log('📭 Services: No data available from API, showing empty state');
+      setServices([]);
+      setError('Không có dữ liệu dịch vụ hoặc API chưa sẵn sàng');
       
     } catch (err) {
       setError('Không thể tải danh sách dịch vụ');
@@ -330,7 +285,7 @@ const Services: React.FC = () => {
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <DollarSign size={16} style={{ color: '#10b981' }} />
+                      {/* <Currency size={16} style={{ color: '#10b981' }} /> */}
                       <span style={{ fontWeight: '600', color: '#10b981', fontSize: '1rem' }}>
                         {formatCurrency(service.price)}
                       </span>

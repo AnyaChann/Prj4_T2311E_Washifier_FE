@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Truck, Plus, Eye, Edit, Trash2, Phone, Car, Star, TrendingUp } from 'lucide-react';
+import { Truck, Plus, Eye, Edit, Trash2, Phone, Car } from 'lucide-react';
 import { ShipperResponse } from '../types/api';
 import { AdminApiService } from '../services/adminApiService';
 import AdvancedFilter from './filters/AdvancedFilter';
@@ -35,16 +35,26 @@ const Shippers: React.FC = () => {
       
       console.log('🚚 Shippers: Fetching shippers data...');
       
-      // Try to fetch real data first, fallback to mock if fails
+      // Try to fetch real data from API
       try {
-        const realData = await AdminApiService.getShippers();
-        if (realData && Array.isArray(realData)) {
-          setShippers(realData);
-          console.log('✅ Shippers: Successfully loaded real data:', realData);
+        const response = await AdminApiService.getShippers();
+        console.log('🔍 Shippers: API Response:', response);
+        
+        // Check if response has data array
+        if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log('✅ Shippers: Successfully loaded real data:', response.data.length, 'shippers');
+          setShippers(response.data);
           return;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Sometimes API returns array directly
+          console.log('✅ Shippers: Successfully loaded real data (direct array):', response.length, 'shippers');
+          setShippers(response);
+          return;
+        } else {
+          console.log('⚠️ Shippers: API returned empty or invalid data');
         }
       } catch (err) {
-        console.log('⚠️ Shippers: Real API failed, using mock data. Error:', err);
+        console.log('⚠️ Shippers: Real API failed. Error:', err);
       }
       
       // Fallback to mock data
@@ -124,8 +134,10 @@ const Shippers: React.FC = () => {
         }
       ];
       
-      setShippers(mockShippers);
-      console.log('✅ Shippers: Got mock shippers data:', mockShippers.length, 'shippers');
+      // Show empty state instead of mock data
+      console.log('📭 Shippers: No data available from API, showing empty state');
+      setShippers([]);
+      setError('Không có dữ liệu shipper hoặc API chưa sẵn sàng');
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải danh sách shipper');
@@ -205,14 +217,6 @@ const Shippers: React.FC = () => {
   const formatVehicleNumber = (vehicleNumber?: string): string => {
     if (!vehicleNumber) return '';
     return vehicleNumber.toUpperCase();
-  };
-
-  const getPerformanceRating = (): number => {
-    return Math.round((Math.random() * 2 + 3) * 10) / 10; // 3.0-5.0 stars
-  };
-
-  const getDeliveryCount = (): number => {
-    return Math.floor(Math.random() * 200) + 50; // 50-250 deliveries
   };
 
   // Filter shippers based on search criteria
@@ -327,7 +331,7 @@ const Shippers: React.FC = () => {
                 <th>Họ tên</th>
                 <th>Liên hệ</th>
                 <th>Phương tiện</th>
-                <th>Hiệu suất</th>
+                {/* <th>Hiệu suất</th> */}
                 <th>Trạng thái</th>
                 <th>Ngày gia nhập</th>
                 <th>Hành động</th>
@@ -335,8 +339,9 @@ const Shippers: React.FC = () => {
             </thead>
             <tbody>
               {filteredShippers.map((shipper) => {
-                const rating = getPerformanceRating();
-                const deliveryCount = getDeliveryCount();
+                // Performance metrics - commented out as not needed yet
+                // const rating = getPerformanceRating();
+                // const deliveryCount = getDeliveryCount();
                 
                 return (
                   <tr key={shipper.id} className={shipper.deletedAt ? 'deleted-row' : ''}>
@@ -363,6 +368,7 @@ const Shippers: React.FC = () => {
                         </span>
                       </div>
                     </td>
+                    {/* Performance column - commented out as not needed yet
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -377,6 +383,7 @@ const Shippers: React.FC = () => {
                         </div>
                       </div>
                     </td>
+                    */}
                     <td>
                       <span className={`status-badge ${getShipperStatusClass(shipper.isActive)}`}>
                         {getShipperStatusText(shipper.isActive)}

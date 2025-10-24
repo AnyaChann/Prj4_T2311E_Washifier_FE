@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tag, Plus, Eye, Edit, Trash2, Calendar, Percent, Gift, TrendingUp } from 'lucide-react';
+import { Tag, Plus, Eye, Edit, Trash2, Calendar, Percent, Gift } from 'lucide-react';
 import { PromotionResponse } from '../types/api';
 import { AdminApiService } from '../services/adminApiService';
 import AdvancedFilter from './filters/AdvancedFilter';
@@ -35,85 +35,32 @@ const Promotions: React.FC = () => {
       
       console.log('🎁 Promotions: Fetching promotions data...');
       
-      // Try to fetch real data first, fallback to mock if fails
+      // Try to fetch real data from API
       try {
-        const realData = await AdminApiService.getPromotions();
-        if (realData && Array.isArray(realData)) {
-          setPromotions(realData);
-          console.log('✅ Promotions: Successfully loaded real data:', realData);
+        const response = await AdminApiService.getPromotions();
+        console.log('🔍 Promotions: API Response:', response);
+        
+        // Check if response has data array
+        if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log('✅ Promotions: Successfully loaded real data:', response.data.length, 'promotions');
+          setPromotions(response.data);
           return;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Sometimes API returns array directly
+          console.log('✅ Promotions: Successfully loaded real data (direct array):', response.length, 'promotions');
+          setPromotions(response);
+          return;
+        } else {
+          console.log('⚠️ Promotions: API returned empty or invalid data');
         }
       } catch (err) {
-        console.log('⚠️ Promotions: Real API failed, using mock data. Error:', err);
+        console.log('⚠️ Promotions: Real API failed. Error:', err);
       }
       
-      // Fallback to mock data
-      const mockPromotions: PromotionResponse[] = [
-        {
-          id: 1,
-          code: 'WELCOME20',
-          description: 'Giảm giá 20% cho khách hàng mới',
-          discountType: 'PERCENTAGE',
-          discountValue: 20,
-          startDate: '2024-01-01T00:00:00Z',
-          endDate: '2024-12-31T23:59:59Z',
-          isActive: true
-        },
-        {
-          id: 2,
-          code: 'SUMMER50K',
-          description: 'Giảm 50,000đ cho đơn hàng từ 200,000đ',
-          discountType: 'FIXED',
-          discountValue: 50000,
-          startDate: '2024-06-01T00:00:00Z',
-          endDate: '2024-08-31T23:59:59Z',
-          isActive: true
-        },
-        {
-          id: 3,
-          code: 'STUDENT15',
-          description: 'Ưu đãi 15% dành cho sinh viên',
-          discountType: 'PERCENTAGE',
-          discountValue: 15,
-          startDate: '2024-09-01T00:00:00Z',
-          endDate: '2024-12-31T23:59:59Z',
-          isActive: true
-        },
-        {
-          id: 4,
-          code: 'FLASH30',
-          description: 'Flash sale giảm 30% trong 24h',
-          discountType: 'PERCENTAGE',
-          discountValue: 30,
-          startDate: '2024-11-11T00:00:00Z',
-          endDate: '2024-11-11T23:59:59Z',
-          isActive: false
-        },
-        {
-          id: 5,
-          code: 'VIP100K',
-          description: 'Giảm 100,000đ cho khách hàng VIP',
-          discountType: 'FIXED',
-          discountValue: 100000,
-          startDate: '2024-01-01T00:00:00Z',
-          endDate: '2024-12-31T23:59:59Z',
-          isActive: true
-        },
-        {
-          id: 6,
-          code: 'BLACKFRIDAY',
-          description: 'Black Friday - Giảm đến 50%',
-          discountType: 'PERCENTAGE',
-          discountValue: 50,
-          startDate: '2024-11-29T00:00:00Z',
-          endDate: '2024-11-29T23:59:59Z',
-          isActive: false,
-          deletedAt: '2024-12-01T10:00:00Z'
-        }
-      ];
-      
-      setPromotions(mockPromotions);
-      console.log('✅ Promotions: Got mock promotions data:', mockPromotions.length, 'promotions');
+      // Show empty state when no data available
+      console.log('📭 Promotions: No data available from API, showing empty state');
+      setPromotions([]);
+      setError('Không có dữ liệu khuyến mãi hoặc API chưa sẵn sàng');
       
     } catch (err) {
       setError('Có lỗi xảy ra khi tải danh sách khuyến mãi');
@@ -201,7 +148,22 @@ const Promotions: React.FC = () => {
   const formatDiscountValue = (promotion: PromotionResponse): string => {
     if (!promotion.discountValue) return '0';
     
-    if (promotion.discountType === 'PERCENTAGE') {
+    // Debug logging
+    console.log('🔍 Promotion Format Debug:', {
+      id: promotion.id,
+      code: promotion.code,
+      discountType: promotion.discountType,
+      discountValue: promotion.discountValue
+    });
+    
+    // Smart detection based on value pattern and code
+    const isPercentage = 
+      promotion.discountType === 'PERCENTAGE' || 
+      promotion.discountValue <= 100 || // Values <= 100 are likely percentages
+      promotion.code?.includes('20') || promotion.code?.includes('30') || 
+      promotion.code?.includes('50') || promotion.code?.includes('25');
+    
+    if (isPercentage && promotion.discountValue <= 100) {
       return `${promotion.discountValue}%`;
     } else {
       return new Intl.NumberFormat('vi-VN', {
@@ -211,8 +173,18 @@ const Promotions: React.FC = () => {
     }
   };
 
-  const getDiscountIcon = (discountType?: string) => {
-    return discountType === 'PERCENTAGE' ? <Percent size={14} /> : <Gift size={14} />;
+  const getDiscountIcon = (promotion: PromotionResponse) => {
+    if (!promotion.discountValue) return <Gift size={14} />;
+    
+    // Use same logic as formatDiscountValue
+    const isPercentage = 
+      promotion.discountType === 'PERCENTAGE' || 
+      (promotion.discountValue && promotion.discountValue <= 100) || 
+      promotion.code?.includes('20') || promotion.code?.includes('30') || 
+      promotion.code?.includes('50') || promotion.code?.includes('25');
+      
+    return isPercentage && promotion.discountValue && promotion.discountValue <= 100 ? 
+      <Percent size={14} /> : <Gift size={14} />;
   };
 
   const isPromotionActive = (promotion: PromotionResponse): boolean => {
@@ -379,13 +351,34 @@ const Promotions: React.FC = () => {
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {getDiscountIcon(promotion.discountType)}
-                      <span style={{ 
-                        fontWeight: '600',
-                        color: promotion.discountType === 'PERCENTAGE' ? '#dc2626' : '#059669'
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        backgroundColor: promotion.discountValue && promotion.discountValue <= 100 ? '#fef2f2' : '#f0fdf4',
+                        border: `1px solid ${promotion.discountValue && promotion.discountValue <= 100 ? '#fecaca' : '#bbf7d0'}`,
+                        borderRadius: '0.375rem',
+                        padding: '0.375rem 0.75rem',
+                        fontSize: '0.875rem'
                       }}>
-                        {formatDiscountValue(promotion)}
-                      </span>
+                        <span style={{ color: promotion.discountValue && promotion.discountValue <= 100 ? '#dc2626' : '#059669' }}>
+                          {getDiscountIcon(promotion)}
+                        </span>
+                        <span style={{ 
+                          fontWeight: '600',
+                          color: promotion.discountValue && promotion.discountValue <= 100 ? '#dc2626' : '#059669',
+                          fontSize: '1rem'
+                        }}>
+                          {formatDiscountValue(promotion)}
+                        </span>
+                        <span style={{ 
+                          fontSize: '0.75rem',
+                          color: '#6b7280',
+                          fontWeight: '500'
+                        }}>
+                          {promotion.discountValue && promotion.discountValue <= 100 ? 'Phần trăm' : 'Cố định'}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td>
